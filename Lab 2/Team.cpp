@@ -5,6 +5,7 @@ using namespace std;
 Team::Team() {}
 
 Team::Team(BasketballPlayer players[5]) {
+	this->hasBall = &(this->Players[rand() % 5]);
 	this->Players[0] = players[0];
 	this->Players[1] = players[1];
 	this->Players[2] = players[2];
@@ -13,7 +14,6 @@ Team::Team(BasketballPlayer players[5]) {
 }
 
 void Team::Possession(Team* team, int possessionsRemaining) {
-	this->hasBall = &(this->Players[rand() % 5]);
 	this->hasBall->DisplayStats();
 
 	int choice;
@@ -51,7 +51,7 @@ void Team::Possession(Team* team, int possessionsRemaining) {
 		} else {
 			float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 			if (r > .5f) {
-				cout << "Offensive rebound, possession retained!" << endl;
+				cout << "Offensive rebound, possession retained!" << endl << endl;
 				this->Possession(team, possessionsRemaining);
 				break;
 			}
@@ -84,14 +84,16 @@ void Team::Possession(Team* team, int possessionsRemaining) {
 		do {
 			cout << "Choose the player number you would like to pass to: ";
 			cin >> buffer;
-			if (this->Players[buffer].Name == this->hasBall->Name) {
+			if (&(this->Players[buffer - 1]) == this->hasBall) {
 				cout << "Pick a different player." << endl;
 				continue;
 			}
-		} while (false);
+			else
+				break;
+		} while (true);
 
 		if (this->hasBall->PassBall()) {
-			this->hasBall = &(this->Players[buffer]);
+			this->hasBall = &(this->Players[buffer - 1]);
 			this->Possession(team, possessionsRemaining);
 		}
 
@@ -101,7 +103,7 @@ void Team::Possession(Team* team, int possessionsRemaining) {
 		this->Possession(team, possessionsRemaining);
 		break;
 	case 4:
-		cout << "Score: " << this->score << '-' << team->getScore() << endl;
+		cout << endl << "Score: " << this->score << '-' << team->getScore() << endl << endl;
 		this->Possession(team, possessionsRemaining);
 		break;
 	default:
@@ -109,26 +111,28 @@ void Team::Possession(Team* team, int possessionsRemaining) {
 	}
 }
 
-void Team::PlayGame(Team* home, Team* away) {
-	int buffer;
+void Team::PlayGame(Team* t) {
 	for (int i = 0; i < 40; i++) {
 		if (i % 2 == 0) {
-			home->Possession(away, i);
+			t->Possession(t, i);
 		}
 		else {
 			do {
 				float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 
 				if (r < .6) {
-					away->setScore(away->getScore() + 2);
+					t->botScore += 2;
 					cout << "Bot scored!" << endl;
+					t->hasBall = &(t->Players[rand() % 5]);
 					break;
 				}
 				else {
 					cout << "Bot missed!" << endl;
 					float r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					if (r > .5)
+					if (r > .5) {
+						t->hasBall = &(t->Players[rand() % 5]);
 						break;
+					}
 				}
 			} while (true);
 		}

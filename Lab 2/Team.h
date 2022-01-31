@@ -7,11 +7,11 @@ class Team {
 private:
 	BasketballPlayer Players[5];
 
-	BasketballPlayer* hasBall;
+	BasketballPlayer* hasBall = nullptr;
 
-	bool hasPossession;
+	int score = 0;
 
-	int score;
+	int botScore = 0;
 	
 	void Possession(Team* team, int possessionRemaining);
 
@@ -21,14 +21,10 @@ public:
 
 	Team(BasketballPlayer[5]);
 
-	static void PlayGame(Team* home, Team* away);
+	static void PlayGame(Team* t);
 
 	int getScore() { return this->score; }
 
 	void setScore(int score) { this->score = score; }
-
-	bool getPossession() { return this->hasPossession; }
-
-	void setPossession(bool p) { this->hasPossession = p; }
 };
 
